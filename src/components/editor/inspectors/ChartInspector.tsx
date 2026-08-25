@@ -19,16 +19,24 @@ interface ChartInspectorProps {
   onChange: (updates: Partial<SDUIComponentNode>) => void;
 }
 
+interface ChartConfig {
+  height?: number;
+  showGrid?: boolean;
+  showTooltip?: boolean;
+  showLegend?: boolean;
+  [key: string]: unknown;
+}
+
 export const ChartInspector: React.FC<ChartInspectorProps> = ({ node, onChange }) => {
-  const config = node.config || node.props?.config || {};
+  const config = ((node.config || node.props?.config || {}) as ChartConfig);
   const height = config.height || 240;
   const showGrid = config.showGrid !== false;
   const showTooltip = config.showTooltip !== false;
   const showLegend = config.showLegend !== false;
-  const data = (node.data || node.props?.data || []).slice();
+  const data = ((node.data || (node.props?.data as unknown[]) || []) as Array<Record<string, unknown>>).slice();
 
-  const handleUpdateDataRow = (index: number, key: string, val: any) => {
-    const next = data.map((item: any, i: number) => {
+  const handleUpdateDataRow = (index: number, key: string, val: unknown) => {
+    const next = data.map((item: Record<string, unknown>, i: number) => {
       if (i === index) {
         return { ...item, [key]: isNaN(Number(val)) ? val : Number(val) };
       }
@@ -38,14 +46,14 @@ export const ChartInspector: React.FC<ChartInspectorProps> = ({ node, onChange }
   };
 
   const handleAddRow = () => {
-    const sample = data[0] ? { ...data[0] } : { category: 'New item', value: 10 };
-    if (sample.month) sample.month = 'New';
-    if (sample.category) sample.category = 'New';
+    const sample = data[0] ? { ...(data[0] as Record<string, unknown>) } : { category: 'New item', value: 10 };
+    if ('month' in sample) sample.month = 'New';
+    if ('category' in sample) sample.category = 'New';
     onChange({ data: [...data, sample], props: { ...node.props, data: [...data, sample] } });
   };
 
   const handleDeleteRow = (index: number) => {
-    const next = data.filter((_: any, i: number) => i !== index);
+    const next = data.filter((_, i: number) => i !== index);
     onChange({ data: next, props: { ...node.props, data: next } });
   };
 
@@ -134,7 +142,7 @@ export const ChartInspector: React.FC<ChartInspectorProps> = ({ node, onChange }
           </Button>
         </Box>
 
-        {data.map((row: any, idx: number) => {
+        {data.map((row: Record<string, unknown>, idx: number) => {
           const keys = Object.keys(row).filter((k) => k !== 'fill');
           return (
             <Box

@@ -25,11 +25,14 @@ import {
 } from '../../store/reportSlice';
 import { flattenTree } from '../../utils/sduiTreeUtils';
 
+import CloseIcon from '@mui/icons-material/Close';
+
 interface ComponentOutlineTreeProps {
   onOpenPalette: () => void;
+  onClose?: () => void;
 }
 
-export const ComponentOutlineTree: React.FC<ComponentOutlineTreeProps> = ({ onOpenPalette }) => {
+export const ComponentOutlineTree: React.FC<ComponentOutlineTreeProps> = ({ onOpenPalette, onClose }) => {
   const dispatch = useAppDispatch();
   const draftContent = useAppSelector((state) => state.report.draftReport.content);
   const selectedComponentId = useAppSelector((state) => state.report.selectedComponentId);
@@ -51,7 +54,8 @@ export const ComponentOutlineTree: React.FC<ComponentOutlineTreeProps> = ({ onOp
   return (
     <Box
       sx={{
-        width: 320,
+        width: { xs: '100vw', sm: 320 },
+        maxWidth: '100vw',
         height: '100%',
         bgcolor: '#FFFFFF',
         borderRight: '1px solid #E2E8F0',
@@ -68,9 +72,16 @@ export const ComponentOutlineTree: React.FC<ComponentOutlineTreeProps> = ({ onOp
             Structure & Layers
           </Typography>
         </Box>
-        <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600 }}>
-          {flatNodes.length} nodes
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600 }}>
+            {flatNodes.length} nodes
+          </Typography>
+          {onClose && (
+            <IconButton size="small" onClick={onClose}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          )}
+        </Box>
       </Box>
 
       {/* Search Filter */}

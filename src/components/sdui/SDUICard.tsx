@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Card, CardContent } from '@mui/material';
 import { SDUIComponentNode } from '../../types/sdui';
 import { SDUIRenderer } from './SDUIRenderer';
@@ -10,6 +10,8 @@ interface SDUICardProps {
 
 export const SDUICard: React.FC<SDUICardProps> = ({ node }) => {
   const isEditMode = useAppSelector((state) => state.report.isEditMode);
+  const viewportMode = useAppSelector((state) => state.report.viewportMode);
+  const isMobile = viewportMode === 'mobile';
 
   const elevation =
     typeof node.elevation === 'number'
@@ -22,13 +24,25 @@ export const SDUICard: React.FC<SDUICardProps> = ({ node }) => {
       ? 1
       : 0;
 
-  const padding = node.styles?.padding !== undefined ? node.styles.padding : 20;
+  const rawPadding = node.styles?.padding;
+  const numPadding =
+    typeof rawPadding === 'number'
+      ? rawPadding
+      : typeof rawPadding === 'string'
+      ? parseFloat(rawPadding) || undefined
+      : undefined;
+
+  const paddingXs = isMobile
+    ? (numPadding !== undefined ? Math.min(14, numPadding) : 14)
+    : (numPadding !== undefined ? Math.min(16, numPadding) : 14);
+  const paddingSm = numPadding !== undefined ? numPadding : 20;
 
   return (
     <Card
       elevation={elevation}
       sx={{
         width: '100%',
+        minWidth: 0,
         backgroundColor: node.styles?.backgroundColor || '#FFFFFF',
         borderRadius: node.styles?.borderRadius || 3,
         border: node.styles?.borderColor ? `1px solid ${node.styles.borderColor}` : '1px solid #E2E8F0',
@@ -40,7 +54,17 @@ export const SDUICard: React.FC<SDUICardProps> = ({ node }) => {
         },
       }}
     >
-      <CardContent sx={{ padding: `${padding}px !important`, display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <CardContent
+        sx={{
+          padding: `${paddingXs}px !important`,
+          '@media (min-width: 600px)': {
+            padding: `${paddingSm}px !important`,
+          },
+          display: 'flex',
+          flexDirection: 'column',
+          gap: { xs: 1.5, sm: 2 },
+        }}
+      >
         {node.children?.map((child) => (
           <SDUIRenderer key={child.id} node={child} />
         ))}

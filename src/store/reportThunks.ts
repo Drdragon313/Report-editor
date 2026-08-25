@@ -27,7 +27,8 @@ export const publishReport = createAsyncThunk<
       report: payloadCopy,
       publishedAt: new Date().toISOString(),
     };
-  } catch (err: any) {
-    return rejectWithValue(err?.message || 'Failed to publish report.');
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to publish report.';
+    return rejectWithValue(message);
   }
 });

@@ -18,9 +18,17 @@ export const SDUIProgressBar: React.FC<SDUIProgressBarProps> = ({ node }) => {
   const percent = Math.min(100, Math.max(0, (value / max) * 100));
 
   return (
-    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h5" sx={{ fontWeight: 600, color: '#0F172A' }}>
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+      {/* Header */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 0.75 }}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 700,
+            color: '#0F172A',
+            fontSize: { xs: '0.875rem', sm: '1rem' },
+          }}
+        >
           {label}
         </Typography>
         {statusText && (
@@ -31,7 +39,8 @@ export const SDUIProgressBar: React.FC<SDUIProgressBarProps> = ({ node }) => {
               bgcolor: `${color}18`,
               color,
               fontWeight: 700,
-              fontSize: '0.75rem',
+              fontSize: '0.6875rem',
+              height: 22,
               border: `1px solid ${color}40`,
             }}
           />
@@ -43,11 +52,11 @@ export const SDUIProgressBar: React.FC<SDUIProgressBarProps> = ({ node }) => {
         <Box
           sx={{
             width: '100%',
-            height: 12,
+            height: 10,
             bgcolor: '#F1F5F9',
-            borderRadius: 6,
+            borderRadius: 5,
             overflow: 'hidden',
-            p: 0.25,
+            p: 0.2,
             border: '1px solid #E2E8F0',
           }}
         >
@@ -56,19 +65,28 @@ export const SDUIProgressBar: React.FC<SDUIProgressBarProps> = ({ node }) => {
               width: `${percent}%`,
               height: '100%',
               bgcolor: color,
-              borderRadius: 5,
+              borderRadius: 4,
               transition: 'width 0.5s ease',
             }}
           />
         </Box>
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* Footer Info */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 0.5,
+        }}
+      >
         <Typography sx={{ fontSize: '0.8125rem', fontWeight: 700, color: '#0F172A' }}>
           {displayValue}
         </Typography>
         {subtext && (
-          <Typography sx={{ fontSize: '0.75rem', color: '#64748B' }}>
+          <Typography sx={{ fontSize: '0.75rem', color: '#64748B', lineHeight: 1.3 }}>
             {subtext}
           </Typography>
         )}

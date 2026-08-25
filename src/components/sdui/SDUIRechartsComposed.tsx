@@ -12,44 +12,53 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { SDUIComponentNode } from '../../types/sdui';
+import { SDUIComponentNode, RechartsSeriesConfig, RechartsComposedProps } from '../../types/sdui';
+import { useAppSelector } from '../../store/hooks';
 
 interface SDUIRechartsComposedProps {
   node: SDUIComponentNode;
 }
 
 export const SDUIRechartsComposed: React.FC<SDUIRechartsComposedProps> = ({ node }) => {
-  const config = node.config || node.props?.config || {};
-  const height = config.height || 240;
+  const viewportMode = useAppSelector((state) => state.report.viewportMode);
+  const isMobile = viewportMode === 'mobile';
+
+  const config = ((node.config || node.props?.config) || {}) as Partial<RechartsComposedProps['config']>;
+  const height = isMobile ? Math.min(210, config.height || 210) : (config.height || 240);
   const xAxisKey = config.xAxisKey || 'month';
   const showGrid = config.showGrid !== false;
   const showTooltip = config.showTooltip !== false;
   const showLegend = config.showLegend !== false;
-  const data = node.data || node.props?.data || [];
-  const series = node.series || node.props?.series || [
+  const data = (node.data || node.props?.data || []) as Array<Record<string, unknown>>;
+  const series = (node.series || node.props?.series || [
     { type: 'line', dataKey: 'score', name: 'Score', stroke: '#E53935', strokeWidth: 3 },
-  ];
+  ]) as RechartsSeriesConfig[];
 
   if (!data || data.length === 0) {
-    return <Box sx={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8' }}>No trend data available</Box>;
+    return (
+      <Box sx={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', fontSize: '0.8125rem' }}>
+        No trend data available
+      </Box>
+    );
   }
 
   return (
-    <Box sx={{ width: '100%', height }}>
+    <Box sx={{ width: '100%', height, minWidth: 0, overflow: 'hidden' }}>
       <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <ComposedChart data={data} margin={{ top: 8, right: 8, left: -22, bottom: 0 }}>
           {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />}
           <XAxis
             dataKey={xAxisKey}
-            tick={{ fill: '#64748B', fontSize: 12 }}
+            tick={{ fill: '#64748B', fontSize: isMobile ? 10 : 11 }}
             axisLine={{ stroke: '#E2E8F0' }}
             tickLine={false}
           />
           <YAxis
             domain={['auto', 'auto']}
-            tick={{ fill: '#64748B', fontSize: 12 }}
+            tick={{ fill: '#64748B', fontSize: isMobile ? 10 : 11 }}
             axisLine={false}
             tickLine={false}
+            width={32}
           />
           {showTooltip && (
             <Tooltip
@@ -59,13 +68,21 @@ export const SDUIRechartsComposed: React.FC<SDUIRechartsComposedProps> = ({ node
                 borderRadius: '8px',
                 border: 'none',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                fontSize: '12px',
+                fontSize: '11px',
+                padding: '6px 10px',
               }}
               itemStyle={{ color: '#FFFFFF' }}
             />
           )}
-          {showLegend && <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />}
-          {series.map((s: any, idx: number) => {
+          {showLegend && (
+            <Legend
+              wrapperStyle={{
+                fontSize: isMobile ? '10px' : '11px',
+                paddingTop: '6px',
+              }}
+            />
+          )}
+          {series.map((s: RechartsSeriesConfig, idx: number) => {
             if (s.type === 'area') {
               return (
                 <Area
@@ -97,9 +114,9 @@ export const SDUIRechartsComposed: React.FC<SDUIRechartsComposedProps> = ({ node
                 dataKey={s.dataKey}
                 name={s.name || s.dataKey}
                 stroke={s.stroke || '#E53935'}
-                strokeWidth={s.strokeWidth || 3}
-                dot={s.dot !== false ? { r: 4, strokeWidth: 2, fill: '#FFFFFF' } : false}
-                activeDot={{ r: 6 }}
+                strokeWidth={s.strokeWidth || 2.5}
+                dot={s.dot !== false ? { r: 3.5, strokeWidth: 2, fill: '#FFFFFF' } : false}
+                activeDot={{ r: 5 }}
               />
             );
           })}

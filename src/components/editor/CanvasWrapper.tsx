@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Box, Paper } from '@mui/material';
 import { useAppSelector } from '../../store/hooks';
 
@@ -28,10 +28,14 @@ export const CanvasWrapper: React.FC<CanvasWrapperProps> = ({ children }) => {
         flex: 1,
         height: '100%',
         overflowY: 'auto',
+        overflowX: 'hidden',
         bgcolor: isEditMode ? '#0F172A08' : '#F8FAFC',
-        py: { xs: 2, sm: 4 },
-        px: { xs: 1.5, sm: 3 },
+        py: { xs: 1.5, sm: 3, md: 4 },
+        px: { xs: 1, sm: 2, md: 3 },
         transition: 'background-color 0.2s ease',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
       }}
     >
       <Paper
@@ -40,14 +44,14 @@ export const CanvasWrapper: React.FC<CanvasWrapperProps> = ({ children }) => {
           width: '100%',
           maxWidth: getCanvasWidth(),
           mx: 'auto',
-          mb: 6,
+          mb: { xs: 4, sm: 6 },
           bgcolor: '#FFFFFF',
-          borderRadius: 3,
+          borderRadius: { xs: 2.5, sm: 3 },
           border: '1px solid #E2E8F0',
-          p: { xs: 2, sm: 4 },
+          p: { xs: 1.5, sm: 3, md: 4 },
           display: 'flex',
           flexDirection: 'column',
-          gap: 3,
+          gap: { xs: 2, sm: 3 },
           minHeight: 'fit-content',
           boxShadow: isEditMode
             ? '0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)'

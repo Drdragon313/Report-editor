@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Chip, Divider, Typography, IconButton, Tooltip } from '@mui/material';
 import { SDUIComponentNode } from '../../types/sdui';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -159,13 +159,15 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({ node }) => {
             bgcolor: '#0F172A',
             color: '#FFFFFF',
             borderRadius: '6px',
-            px: 1,
+            px: 0.75,
             py: 0.25,
             display: 'flex',
             alignItems: 'center',
-            gap: 0.5,
+            gap: 0.3,
             boxShadow: '0 4px 14px rgba(15, 23, 42, 0.35)',
             border: '1px solid #334155',
+            maxWidth: '100%',
+            overflowX: 'auto',
             animation: 'fadeIn 0.15s ease-in-out',
             '@keyframes fadeIn': {
               from: { opacity: 0, transform: 'translateY(4px)' },
@@ -174,7 +176,7 @@ export const SDUIRenderer: React.FC<SDUIRendererProps> = ({ node }) => {
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <Typography sx={{ fontSize: '0.6875rem', fontWeight: 700, mr: 0.5, color: '#93C5FD', letterSpacing: '0.02em' }}>
+          <Typography sx={{ fontSize: '0.6875rem', fontWeight: 700, mr: 0.5, color: '#93C5FD', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
             {node.type}
           </Typography>
 

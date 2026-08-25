@@ -100,7 +100,7 @@ export interface RechartsComposedProps {
     showLegend?: boolean;
   };
   series: RechartsSeriesConfig[];
-  data: Array<Record<string, any>>;
+  data: Array<Record<string, unknown>>;
 }
 
 export interface RechartsPieProps {
@@ -119,7 +119,7 @@ export interface RechartsPieProps {
     category: string;
     value: number;
     fill?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   }>;
 }
 
@@ -137,7 +137,7 @@ export interface RechartsBarProps {
     name?: string;
     fill?: string;
   }>;
-  data: Array<Record<string, any>>;
+  data: Array<Record<string, unknown>>;
 }
 
 export interface ImpactFactorItem {
@@ -229,7 +229,7 @@ export interface SDUIComponentNode {
   columns?: SDUIResponsiveColumns;
   styles?: SDUIStyles;
   elevation?: 'none' | 'sm' | 'md' | 'lg' | number;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
   children?: SDUIComponentNode[];
   // Direct props shorthands for ease of schema
   title?: string;
@@ -241,11 +241,11 @@ export interface SDUIComponentNode {
   max?: number;
   status_text?: string;
   color?: string;
-  config?: Record<string, any>;
-  series?: any[];
-  data?: any[];
-  stats?: any[];
-  items?: any[];
+  config?: Record<string, unknown>;
+  series?: unknown[];
+  data?: unknown[];
+  stats?: unknown[];
+  items?: unknown[];
 }
 
 export interface ReportPayload {

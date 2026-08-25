@@ -7,7 +7,6 @@ import {
   Tab,
   Button,
   Chip,
-  Divider,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import TuneIcon from '@mui/icons-material/Tune';
@@ -33,7 +32,11 @@ import ChartInspector from './inspectors/ChartInspector';
 import ImpactListInspector from './inspectors/ImpactListInspector';
 import ActionCardInspector from './inspectors/ActionCardInspector';
 
-export const PropertyInspector: React.FC = () => {
+interface PropertyInspectorProps {
+  onClose?: () => void;
+}
+
+export const PropertyInspector: React.FC<PropertyInspectorProps> = ({ onClose }) => {
   const dispatch = useAppDispatch();
   const selectedComponentId = useAppSelector((state) => state.report.selectedComponentId);
   const draftContent = useAppSelector((state) => state.report.draftReport.content);
@@ -41,11 +44,19 @@ export const PropertyInspector: React.FC = () => {
 
   const selectedNode = selectedComponentId ? findNodeById(draftContent, selectedComponentId) : null;
 
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+    dispatch(selectComponent(null));
+  };
+
   if (!selectedNode) {
     return (
       <Box
         sx={{
-          width: 340,
+          width: { xs: '100vw', sm: 340 },
+          maxWidth: '100vw',
           height: '100%',
           bgcolor: '#FFFFFF',
           borderLeft: '1px solid #E2E8F0',
@@ -103,7 +114,8 @@ export const PropertyInspector: React.FC = () => {
   return (
     <Box
       sx={{
-        width: 340,
+        width: { xs: '100vw', sm: 340 },
+        maxWidth: '100vw',
         height: '100%',
         bgcolor: '#FFFFFF',
         borderLeft: '1px solid #E2E8F0',
@@ -122,7 +134,7 @@ export const PropertyInspector: React.FC = () => {
             </Typography>
           </Box>
         </Box>
-        <IconButton size="small" onClick={() => dispatch(selectComponent(null))}>
+        <IconButton size="small" onClick={handleClose}>
           <CloseIcon fontSize="small" />
         </IconButton>
       </Box>

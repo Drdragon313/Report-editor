@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -9,6 +9,8 @@ import {
   Typography,
   IconButton,
   Alert,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -26,18 +28,24 @@ interface RawJsonModalProps {
 
 export const RawJsonModal: React.FC<RawJsonModalProps> = ({ open, onClose }) => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const draftReport = useAppSelector((state) => state.report.draftReport);
-  const [jsonText, setJsonText] = useState('');
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [prevDraftReport, setPrevDraftReport] = useState(draftReport);
+  const [jsonText, setJsonText] = useState(() => JSON.stringify(draftReport, null, 2));
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
+  if (open !== prevOpen || (open && draftReport !== prevDraftReport)) {
+    setPrevOpen(open);
+    setPrevDraftReport(draftReport);
     if (open) {
       setJsonText(JSON.stringify(draftReport, null, 2));
       setError(null);
       setCopied(false);
     }
-  }, [open, draftReport]);
+  }
 
   const handleApply = () => {
     try {
@@ -47,8 +55,8 @@ export const RawJsonModal: React.FC<RawJsonModalProps> = ({ open, onClose }) => 
       }
       dispatch(setFullDraftJson(parsed));
       onClose();
-    } catch (err: any) {
-      setError(err?.message || 'Invalid JSON syntax');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Invalid JSON syntax');
     }
   };
 
@@ -69,30 +77,36 @@ export const RawJsonModal: React.FC<RawJsonModalProps> = ({ open, onClose }) => 
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="lg"
+      fullWidth
+      fullScreen={isMobile}
+    >
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: { xs: 1.5, sm: 2 }, pb: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <CodeIcon color="primary" />
-          <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            Raw SDUI JSON Schema Editor
+          <CodeIcon color="primary" sx={{ fontSize: { xs: 20, sm: 24 } }} />
+          <Typography variant="h3" sx={{ fontWeight: 700, fontSize: { xs: '1.0625rem', sm: '1.25rem' } }}>
+            Raw SDUI Schema
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <Button
             size="small"
             variant="outlined"
-            startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
+            startIcon={copied ? <CheckIcon sx={{ fontSize: 14 }} /> : <ContentCopyIcon sx={{ fontSize: 14 }} />}
             onClick={handleCopy}
-            sx={{ color: '#475569', borderColor: '#CBD5E1' }}
+            sx={{ color: '#475569', borderColor: '#CBD5E1', fontSize: { xs: '0.6875rem', sm: '0.75rem' }, px: 1 }}
           >
-            {copied ? 'Copied' : 'Copy JSON'}
+            {copied ? 'Copied' : 'Copy'}
           </Button>
           <Button
             size="small"
             variant="outlined"
-            startIcon={<DownloadIcon />}
+            startIcon={<DownloadIcon sx={{ fontSize: 14 }} />}
             onClick={handleDownload}
-            sx={{ color: '#475569', borderColor: '#CBD5E1' }}
+            sx={{ color: '#475569', borderColor: '#CBD5E1', fontSize: { xs: '0.6875rem', sm: '0.75rem' }, px: 1, display: { xs: 'none', sm: 'inline-flex' } }}
           >
             Download
           </Button>
@@ -102,29 +116,29 @@ export const RawJsonModal: React.FC<RawJsonModalProps> = ({ open, onClose }) => 
         </Box>
       </DialogTitle>
 
-      <DialogContent sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <DialogContent sx={{ p: { xs: 1.5, sm: 2 }, display: 'flex', flexDirection: 'column', gap: 1 }}>
         {error && (
-          <Alert severity="error" sx={{ mb: 1 }}>
+          <Alert severity="error" sx={{ mb: 1, fontSize: '0.75rem' }}>
             {error}
           </Alert>
         )}
         <Box
           component="textarea"
           value={jsonText}
-          onChange={(e: any) => {
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             setJsonText(e.target.value);
             setError(null);
           }}
           spellCheck={false}
           sx={{
             width: '100%',
-            height: '500px',
+            height: isMobile ? 'calc(100vh - 180px)' : '480px',
             bgcolor: '#0F172A',
             color: '#38BDF8',
-            p: 2,
+            p: 1.5,
             borderRadius: 2,
             fontFamily: 'Consolas, Monaco, "Courier New", monospace',
-            fontSize: '0.8125rem',
+            fontSize: { xs: '0.6875rem', sm: '0.8125rem' },
             lineHeight: 1.5,
             border: '1px solid #334155',
             resize: 'none',
@@ -136,11 +150,11 @@ export const RawJsonModal: React.FC<RawJsonModalProps> = ({ open, onClose }) => 
         />
       </DialogContent>
 
-      <DialogActions sx={{ p: 2 }}>
-        <Button onClick={onClose} sx={{ color: '#64748B' }}>
+      <DialogActions sx={{ p: { xs: 1.5, sm: 2 }, gap: 1 }}>
+        <Button onClick={onClose} sx={{ color: '#64748B', fontSize: '0.8125rem' }}>
           Cancel
         </Button>
-        <Button onClick={handleApply} variant="contained" color="primary">
+        <Button onClick={handleApply} variant="contained" color="primary" sx={{ fontSize: '0.8125rem' }}>
           Apply JSON Changes
         </Button>
       </DialogActions>

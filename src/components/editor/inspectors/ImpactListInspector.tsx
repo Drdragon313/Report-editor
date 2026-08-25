@@ -17,6 +17,8 @@ interface ImpactListInspectorProps {
   onChange: (updates: Partial<SDUIComponentNode>) => void;
 }
 
+const createFactorId = () => `factor_${Date.now()}`;
+
 export const ImpactListInspector: React.FC<ImpactListInspectorProps> = ({ node, onChange }) => {
   const currentTitle = (node.props?.title as string) || node.title || '';
   const currentSubtitle = (node.props?.subtitle as string) || node.subtitle || '';
@@ -29,7 +31,7 @@ export const ImpactListInspector: React.FC<ImpactListInspectorProps> = ({ node, 
 
   const handleAddItem = () => {
     const newItem: ImpactFactorItem = {
-      id: `factor_${Date.now()}`,
+      id: createFactorId(),
       title: 'New Score Factor',
       impactLevel: 'Medium',
       statusText: 'Good Standing',
@@ -107,7 +109,7 @@ export const ImpactListInspector: React.FC<ImpactListInspectorProps> = ({ node, 
               label="Impact Level"
               size="small"
               value={item.impactLevel}
-              onChange={(e) => handleUpdateItem(idx, { impactLevel: e.target.value as any })}
+              onChange={(e) => handleUpdateItem(idx, { impactLevel: e.target.value as ImpactFactorItem['impactLevel'] })}
             >
               <MenuItem value="High">High Impact</MenuItem>
               <MenuItem value="Medium">Medium Impact</MenuItem>
